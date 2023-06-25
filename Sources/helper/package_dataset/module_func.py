@@ -1,5 +1,6 @@
 import types
 
+
 def get_func_research(f_label):
     compiled_function = compile(f_label, "<string>", "exec")
     exec(compiled_function)
