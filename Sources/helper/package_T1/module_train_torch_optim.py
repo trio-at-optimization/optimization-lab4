@@ -11,12 +11,23 @@ def train_torch_optim(
         optimizer_method,
         num_epochs=10000,
         lr=0.01,
+        momentum=None,
+        nesterov=False,
         apply_min=True):
 
     # Определяем модель и исходные значения w
     w = torch.tensor(x0, requires_grad=True)
 
-    optimizer = optimizer_method([w], lr=lr)
+    if momentum is not None:
+        if nesterov:
+            optimizer = optimizer_method([w], lr=lr, momentum=momentum, nesterov=True)
+        else:
+            optimizer = optimizer_method([w], lr=lr, momentum=momentum)
+    else:
+        if nesterov:
+            optimizer = optimizer_method([w], lr=lr, nesterov=True)
+        else:
+            optimizer = optimizer_method([w], lr=lr)
 
     points = [w.detach().numpy()]
     # Цикл оптимизации
