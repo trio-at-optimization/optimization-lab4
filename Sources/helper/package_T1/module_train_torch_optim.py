@@ -29,7 +29,7 @@ def train_torch_optim(
         else:
             optimizer = optimizer_method([w], lr=lr)
 
-    points = [w.detach().numpy()]
+    points = [np.copy(w.detach().numpy())]
     # Цикл оптимизации
     for epoch in range(num_epochs):
         optimizer.zero_grad()  # Обнуляем градиенты
@@ -52,7 +52,7 @@ def train_torch_optim(
         # # Выводим прогресс оптимизации
         # if (epoch + 1) % 100 == 0:
         #     print(f'Epoch [{epoch+1}/{num_epochs}], Loss: {loss.item()}')
-        points.append(w.detach().numpy())
+        points.append(np.copy(w.detach().numpy()))
 
     # Получаем обученные значения w
     # trained_w = w.detach().numpy()

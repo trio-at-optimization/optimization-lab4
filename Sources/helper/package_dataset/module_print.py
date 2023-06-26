@@ -19,3 +19,13 @@ def print_generated(X, Y, dataset, answer=None, title=None):
         plt.plot(X, answer, label='Answer', color='red', antialiased=True, linewidth=1.5)
     plt.legend()
     plt.show()
+
+
+def print_mse_loss_history(results_dict):
+    for key, value in results_dict.items():
+        plt.plot(value, label=key)
+
+    plt.legend()
+    plt.xlabel('Epochs')
+    plt.ylabel('Loss')
+    plt.show()
