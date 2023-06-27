@@ -1,10 +1,9 @@
-import numpy as np
-import math
 import types
-from ..package_lab3 import gauss_newton_fast
-from ..package_lab3 import dog_leg
-from ..package_lab3 import adam
-from ..package_lab3 import lbfgs
+import numpy as np
+from ..package_T1 import gauss_newton_fast
+from ..package_T1 import dog_leg
+from ..package_T1 import adam
+from ..package_T1 import lbfgs
 
 
 def get_func_method(argument):
