@@ -9,13 +9,6 @@ def mse_loss(f, w, x_train, y_train):
     return mse
 
 
-def mse_loss_python_only(dataset_X, dataset_Y, w, f):
-    sum_result = 0.0
-    for i in range(len(dataset_X)):
-        sum_result += abs(dataset_Y[i] - f(dataset_X[i], w))
-    return sum_result / len(dataset_X)
-
-
 def mse_loss_torch(dataset_X, dataset_Y, w, f):
     y_pred = f(dataset_X, w)
     mse = torch.mean((dataset_Y - y_pred) ** 2)

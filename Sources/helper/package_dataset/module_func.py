@@ -1,6 +1,6 @@
-import types
 import numpy as np
-import torch
+import math
+import types
 
 
 def get_func_research(f_label):
