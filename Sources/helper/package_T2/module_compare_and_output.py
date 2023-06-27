@@ -25,7 +25,7 @@ def print_full_grad(file_info, list_result, list_label, title='Спуск на �
     z = np.vectorize(lambda x, y: file_info.f(np.array([x, y])))(x, y)
     ax.plot(x, y, marker='.', markersize=10, markerfacecolor='black', color='coral', zs=z, label=list_label,
             linewidth=2)
-    
+
     print(
         f'{list_label:15} ==> {file_info.f(list_result[-1]):10f} in [{list_result[-1][0]:10f}, {list_result[-1][1]:10f}] in {len(x) - 1} steps.')
 
@@ -92,7 +92,7 @@ def print_lines_grad(file_info_3d, result, label, nth=1, title='Спуск на 
         plt.savefig(filename + '_lines' + filename_extension, dpi=dpi, bbox_inches=0, transparent=True)
 
     plt.show()
-    
+
 
 def compare(
         func
@@ -106,11 +106,11 @@ def compare(
         , azim=(45, 45)
         , options=None
         , manual_save_history=False
-    ):
+):
     def get_scipy_history():
         if not manual_save_history:
             return minimize(func, initial_x, method=scipy_method_label, options=options)['allvecs']
-        
+
         x_list = []
         callback = (lambda x: x_list.append(x))
         minimize(func, initial_x, method=scipy_method_label, callback=callback)

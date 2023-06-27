@@ -1,0 +1,16 @@
+{
+    "f_label": "def f(x, w):\n    N = len(w) // 2\n    signal = np.zeros_like(x)\n    \n    for k in range(N):\n        if k == 0:\n            signal += w[k] * np.cos(2 * np.pi * k * x)\n        else:\n            signal += w[k] * np.cos(2 * np.pi * k * x) + w[k + N] * np.sin(2 * np.pi * k * x)\n    \n    return signal\n",
+    "density": 8000,
+    "dots_count": 2000,
+    "radius": 0.03,
+    "dist": 1,
+    "w": [
+        1,
+        0.5,
+        0.5,
+        0.8,
+        0.3,
+        0.1
+    ],
+    "test_count": 10
+}
