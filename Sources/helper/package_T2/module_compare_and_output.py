@@ -27,7 +27,7 @@ def print_full_grad(file_info, list_result, list_label, title='Спуск на �
             linewidth=2)
     
     print(
-        f'{list_label:15} ==> {file_info.f(list_result[-1]):10f} in [{list_result[-1][0]:10f}, {list_result[-1][1]:10f}] in {len(x)} steps.')
+        f'{list_label:15} ==> {file_info.f(list_result[-1]):10f} in [{list_result[-1][0]:10f}, {list_result[-1][1]:10f}] in {len(x) - 1} steps.')
 
     ax.view_init(elev=elev, azim=azim)
 
@@ -78,7 +78,7 @@ def print_lines_grad(file_info_3d, result, label, nth=1, title='Спуск на 
     ax.plot(x, y, marker='.', markersize=10, markerfacecolor='black', color='coral', label=label, linewidth=1.8)
     print(
         f'{label:15} ==> '
-        f'{file_info_3d.f(result[-1]):10f} in [{result[-1][0]:10f}, {result[-1][1]:10f}] in {len(result)} steps.')
+        f'{file_info_3d.f(result[-1]):10f} in [{result[-1][0]:10f}, {result[-1][1]:10f}] in {len(result) - 1} steps.')
 
     # Добавление заголовка и подписей осей
     if title != '':
@@ -92,16 +92,36 @@ def print_lines_grad(file_info_3d, result, label, nth=1, title='Спуск на 
         plt.savefig(filename + '_lines' + filename_extension, dpi=dpi, bbox_inches=0, transparent=True)
 
     plt.show()
+    
 
+def compare(
+        func
+        , initial_x
+        , x_lin
+        , y_lin, method
+        , scipy_method_label
+        , output_label
+        , max_iter=10
+        , elev=(30, 30)
+        , azim=(45, 45)
+        , options=None
+        , manual_save_history=False
+    ):
+    def get_scipy_history():
+        if not manual_save_history:
+            return minimize(func, initial_x, method=scipy_method_label, options=options)['allvecs']
+        
+        x_list = []
+        callback = (lambda x: x_list.append(x))
+        minimize(func, initial_x, method=scipy_method_label, callback=callback)
 
-def compare(func, initial_x, x_lin, y_lin, method, scipy_method_label, output_label, max_iter=10, elev=(30, 30), azim=(45, 45)):
+        return x_list
+
     # Our implementation
     result_definition = method(initial_x, func, max_iter=max_iter)
 
     # SciPy implementation
-    result_scipy = minimize(func, initial_x, method=scipy_method_label, options={'maxiter' : max_iter, 'gtol' : 1e-9})
-
-    print(result_scipy)
+    result_scipy = get_scipy_history()
 
     X, Y = np.meshgrid(x_lin, y_lin)
     f_info = file_info_3d(X, Y, func, initial_x)
@@ -111,5 +131,5 @@ def compare(func, initial_x, x_lin, y_lin, method, scipy_method_label, output_la
     print_full_grad(f_info, np.array(result_definition), output_label, elev=elev[0], azim=azim[0])
 
     print('SciPy implementation')
-    print_lines_grad(f_info, np.array(result_scipy['allvecs']), f'SciPy {output_label}')
-    print_full_grad(f_info, np.array(result_scipy['allvecs']), f'SciPy {output_label}', elev=elev[1], azim=azim[1])
+    print_lines_grad(f_info, np.array(result_scipy), f'SciPy {output_label}')
+    print_full_grad(f_info, np.array(result_scipy), f'SciPy {output_label}', elev=elev[1], azim=azim[1])
