@@ -22,9 +22,9 @@ def print_lines_grad(file_info_3d, result, label, nth=1, title='Спуск на 
     if not np.array_equal(list_result_nth[-1], result[-1]):
         list_result_nth = np.vstack([list_result_nth, result[-1]])
 
-    levels = np.unique(sorted([file_info_3d.f(p) for p in list_result_nth]))
-    cf = ax.contourf(file_info_3d.X, file_info_3d.Y, file_info_3d.Z, levels=(levels if len(levels) > 1 else None), antialiased=True, linewidths=1.7,
-                    cmap='RdGy')
+    # levels = np.unique(sorted([file_info_3d.f(p) for p in list_result_nth]))
+    # levels=(levels if len(levels) > 1 else None)
+    cf = ax.contourf(file_info_3d.X, file_info_3d.Y, file_info_3d.Z, antialiased=True, linewidths=1.7)
     fig.colorbar(cf, ax=ax)
 
     x = list_result_nth[:, 0]
@@ -67,7 +67,9 @@ def minimize_and_output(
             return minimize(func, initial_x, method=method_label, options=options)['allvecs']
 
         points = []
-        callback = (lambda x, _: points.append(x))
+        
+        def callback(x, _=None):
+            points.append(x)
 
         minimize(func, initial_x, method=method_label, constraints=constraints, bounds=bounds, callback=callback)
 
