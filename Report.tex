@@ -348,8 +348,26 @@ function $mse\_loss(X_{\text{dataset}}, ~ Y_{\text{dataset}}, ~ w, ~ f)$:
 	Поэтому, мы ставим задачу получить как можно лучший градиент и значение в этой точке более точно.
 
 	Для примера мы рассмотрим функцию Розенброка и три метода получения градиента: из библиотеки \texttt{torch}, из \texttt{numdifftool}, и методом <<по определению>> в буквальном смысле.
+	В качестве функции минимизации мы возьмем модификацию стохастического градиентного спуска Adam (из коллекции собственных реализаций), в качестве начальной точки $\langle p_{x_0}, p_{y_0} \rangle \gets \langle -1.0, 0.1 \rangle$, для всех разных методов получения градиента мы положим в качестве начального шага $\mathtt{initial\_w} = 0.5$ и, наконец, сгенерируем набор данных для исследования градиентов.
+	\begin{figure}[H]
+		\centering
+		\includegraphics[scale = 0.65]{Image/T2B_DATASET.png}
+		\caption*{Generated dataset for Rosen}
+	\end{figure}
+	Запустим наших зверей и посмотрим вот на какие результаты:
+	\begin{table}[H]
+		\centering
+		\begin{tabular}{l|l}
+			Выбранный метод градиента & Количество шагов до схождения \\ \hline
+			<<По определению>>        & $51$ \\
+			\texttt{torch}            & $51$ \\
+			\texttt{numdifftool}      & $51$
+		\end{tabular}
+	\end{table}
+	Замечаем интересную находку: все использованные методы сходятся за одинаковое число шагов, умоляя общности среднего подсчета, что нам явно гарантирует, что мы можем использовать любой из них и, при любом раскладе, выиграть.
+	Теперь же мы посмотрим на разницу отношения текущей приближенной точки алгоритма и её градиента для всех трех методов.
 	Зададим в качестве обозначений $\langle p_x, p_y\rangle$~- точка, $\langle t_x, t_y\rangle$~- градиент из \texttt{torch}, $\langle n_x, n_y\rangle$~- градиент из \texttt{numdifftool} и $\langle d_x, d_y\rangle$~- градиент по определению.
-	Тогда, полученные результаты:
+	Полученные результаты для \texttt{torch}:
 	\begin{table}[H]
 		\centering
 		\begin{tabular}{c|c}
@@ -365,6 +383,7 @@ function $mse\_loss(X_{\text{dataset}}, ~ Y_{\text{dataset}}, ~ w, ~ f)$:
 			$\langle 1.87666167 3.03296134 \rangle$ & $\langle -0.00005016024349737770, 0.00013933684458654905 \rangle$
 		\end{tabular}
 	\end{table}
+	Полученные результаты для \texttt{numdifftool}:
 	\begin{table}[H]
 		\centering
 		\begin{tabular}{c|c}
@@ -380,7 +399,8 @@ function $mse\_loss(X_{\text{dataset}}, ~ Y_{\text{dataset}}, ~ w, ~ f)$:
 			$\langle 1.87666167 3.03296134 \rangle$ & $\langle -0.00005016024349737770, 0.00013933684458654840 \rangle$
 		\end{tabular}
 	\end{table}
-		\begin{table}[H]
+	Полученные результаты для собственного градиента:
+	\begin{table}[H]
 		\centering
 		\begin{tabular}{c|c}
 			$\langle p_x, p_y \rangle$ & $\langle d_x, d_y \rangle$ \\ \hline
