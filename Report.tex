@@ -349,6 +349,7 @@ function $mse\_loss(X_{\text{dataset}}, ~ Y_{\text{dataset}}, ~ w, ~ f)$:
 	А вот со вторым ситуация примерно следующая: дело в том, как мы выяснили с предыдущей рассмотренной лабораторной работы, метод Powell Dog Leg является модифицированной версии Gauss-Newtow и исследования показали, что свой туз в рукаве данный метод не часто использует при работе алгоритма (как правило, при первых $k < n$ шагов, далее~-- Gauss-Newton).
 	Именно поэтому мы рассматриваем именно их.
 	\subsubsection*{vs. \mintinline{python}|scipy.optimize.minimize|}
+	\paragraph{BFGS}
 	Начнем с BFGS или, как его еще называют в SciPy, \mintinline{python}|scipy.optimize.minimize(method='BFGS')|.
 	Исследуем безымянную функцию $f\ :\ \mathbb{R} \times \mathbb{R} \to \mathbb{R}$, определенную следующим образом:
 	\[
@@ -420,6 +421,56 @@ function $mse\_loss(X_{\text{dataset}}, ~ Y_{\text{dataset}}, ~ w, ~ f)$:
 			Испытуемый & Количество шагов & $\langle x, y \rangle$ & $z$ \\ \hline
 			Собственная реализация & $14$ & $\langle 3.000000, 2.000000 \rangle$ & $0.000000$ \\
 			SciPy & $10$ & $\langle 3.000000, 2.000000 \rangle$ & $0.000000$
+		\end{tabular}
+	\end{table}
+	\paragraph{L-BFGS}
+	Да-да, мы, конечно, обманули друг друга, сказав, что будет рассмотрен только BFGS, но тут мы просто обозначим и вспомним, что столь не очевидная модификация существует и пользуется популярностью, чем его предшественник.
+	Функции и параметры мы возьмем теми же, поэтому, не будем на этом останавливаться и сразу выдадим результаты.
+	Пути сходимости по первой функции:
+	\begin{figure}[H]
+		\centering
+		\includegraphics[scale = 0.35]{Image/T2A_F1_LBFGS.png}
+		\includegraphics[scale = 0.35]{Image/T2A_F1_scipy_LBFGS.png}
+		\caption*{L-BFGS vs. SciPy's on first function}
+	\end{figure}
+	Линии уровней путей сходимости по первой функции:
+	\begin{figure}[H]
+		\centering
+		\includegraphics[scale = 0.35]{Image/T2A_F1_LBFGS_LEVELS.png}
+		\includegraphics[scale = 0.35]{Image/T2A_F1_scipy_LBFGS_LEVELS.png}
+		\caption*{L-BFGS vs. SciPy's on first function (levels)}
+	\end{figure}
+	Данные, полученные после схождения:
+	\begin{table}[H]
+		\centering
+		\begin{tabular}{l|l|l|l}
+			Испытуемый & Количество шагов & $\langle x, y \rangle$ & $z$ \\ \hline
+			Собственная реализация & $10$ & $\langle -0.822934, -0.499453 \rangle$ & $-0.041983$ \\
+			SciPy & $8$ & $\langle -0.822922, -0.499418 \rangle$ & $-0.041983$
+		\end{tabular}
+	\end{table}
+	Теперь перейдем к второй функции.
+	Пути сходимости алгоритмов:
+	\begin{figure}[H]
+		\centering
+		\includegraphics[scale = 0.35]{Image/T2A_F2_LBFGS.png}
+		\includegraphics[scale = 0.35]{Image/T2A_F2_scipy_LBFGS.png}
+		\caption*{L-BFGS vs. SciPy's on second function}
+	\end{figure}
+	Линии уровней путей сходимости:
+	\begin{figure}[H]
+		\centering
+		\includegraphics[scale = 0.35]{Image/T2A_F2_LBFGS_LEVELS.png}
+		\includegraphics[scale = 0.35]{Image/T2A_F2_scipy_LBFGS_LEVELS.png}
+		\caption*{L-BFGS vs. SciPy's on first function (levels)}
+	\end{figure}
+	Наконец, полученные после схождения данные:
+	\begin{table}[H]
+		\centering
+		\begin{tabular}{l|l|l|l}
+			Испытуемый & Количество шагов & $\langle x, y \rangle$ & $z$ \\ \hline
+			Собственная реализация & $11$ & $\langle 3.000000, 2.000000 \rangle$ & $0.000000$ \\
+			SciPy & $9$ & $\langle 3.000000, 2.000000 \rangle$ & $0.000000$
 		\end{tabular}
 	\end{table}
 	\subsubsection*{vs. \mintinline{python}|scipy.optimize.least_squares|}
