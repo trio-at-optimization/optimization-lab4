@@ -1,0 +1,10 @@
+{
+    "f_label": "def f(x, w):\n    return math.sin(x * w[0] ** 2) + math.cos(x * w[1] ** 2)\n",
+    "density": 8000,
+    "dots_count": 500,
+    "radius": 0.001,
+    "dist": 0.3,
+    "w0": 3,
+    "w1": 5,
+    "test_count": 100
+}
