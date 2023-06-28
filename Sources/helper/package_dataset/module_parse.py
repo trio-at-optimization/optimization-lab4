@@ -70,7 +70,8 @@ def get_and_parse_result(name):
     # print(f'average_quantile_steps {average_quantile_steps}')
 
 
-metric_to_columns = {'MSE': 2, "Steps": 3, 'MSE 90%': 4, 'Steps 90%': 5}
+metric_to_columns = {'MSE': 2, "Calls f(x)": 3}
+metric_to_columns_with_top_decile_approach = {'MSE': 2, "Calls f(x)": 3, 'MSE 90%': 4, 'Calls f(x) 90%': 5}
 
 
 def print_results(results_list, labels_list, metric_name, axis=0):
@@ -83,3 +84,26 @@ def print_results(results_list, labels_list, metric_name, axis=0):
     plt.legend()
     plt.show()
 
+
+def parse_and_print_few(list_names, metrics=None, axis=0, is_print=False, use_dataset_name=False,
+                        with_top_decile_approach=False):
+    if metrics is None:
+        if with_top_decile_approach:
+            metrics = metric_to_columns_with_top_decile_approach
+        else:
+            metrics = metric_to_columns
+    results_list = []
+    labels_list = []
+
+    for name in list_names:
+        results_list.append(get_and_parse_result(name))
+        if use_dataset_name:
+            labels_list.append(get_params_results(name)['method'] + ' ' + name)
+        else:
+            labels_list.append(get_params_results(name)['method'])
+
+    if is_print:
+        print(results_list)
+
+    for metric_name in metrics:
+        print_results(results_list, labels_list, metric_name, axis=axis)

@@ -1,13 +1,13 @@
 import numpy as np
 import math
 
-from ..package_dataset import mse_loss
+from ..package_dataset import mse_loss_norm
 
 # ===================== ADAM =====================
 
 
 def mse_loss_adam(f, X, Y, w):
-    return mse_loss(X, Y, w, f)
+    return mse_loss_norm(X, Y, w, f)
 
 
 def mse_loss_grad_adam(f, X, y, w, batch_size, delta=1e-6):

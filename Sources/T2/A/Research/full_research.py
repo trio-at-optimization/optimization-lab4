@@ -28,12 +28,13 @@ def research_thread(num_thread, script_path, dataset_name, method, result_filena
 
 
 def main():
-    result_name = 'X_10_SCIPY-DOG-LEG'
+    result_name = 'X_10_SCIPY-SCIPY-L'
     params = {
         'dataset_name': '1',
-        'method': 'scipy-dog-leg',
+        'method': 'scipy-l-bfgs',
         # gauss-newton / dog-leg / adam / l-bfgs
         # scipy-bfgs / scipy-l-bfgs / scipy-dog-leg
+        # scipy-least_squares-dog-box / scipy-least_squares-trf
         "init_dist_x": 10,
         "init_dist_y": 0,
         "init_density_x": 101,

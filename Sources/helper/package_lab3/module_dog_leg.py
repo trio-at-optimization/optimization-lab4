@@ -2,6 +2,7 @@ import math
 import copy
 import numpy as np
 
+
 def func(f, X, Y, w, j):
     x = X[j]
     value = Y[j]

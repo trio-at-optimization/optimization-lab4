@@ -11,7 +11,8 @@ from .module_mse import mse_loss_norm
 import scipy
 from numdifftools import Jacobian, Hessian
 
-def scipy_minimize(method, manual_save_history=False):
+
+def scipy_minimize(method, manual_save_history=False, is_least_squares=False):
     def minimize_func(f_real, X, Y, x0, epsilon, max_iter):
         def f(w):
             return mse_loss_norm(X, Y, w, f_real)
@@ -22,22 +23,28 @@ def scipy_minimize(method, manual_save_history=False):
         def fun_hess(x):
             return Hessian(lambda xx: f(xx))(x)
 
-        def get_scipy_history():
-            if not manual_save_history:
-                return scipy.optimize.minimize(f, x0, method=method, options={'maxiter' : max_iter})['allvecs']
+        if not manual_save_history:
+            return scipy.optimize.minimize(f, x0, method=method, options={'maxiter' : max_iter})['allvecs']
 
-            x_list = []
-            callback = (lambda x: x_list.append(x))
+        def f_with_count(w):
+            f_with_count.num_iterations += 1
+            return f(w)
+
+        f_with_count.num_iterations = 0
+
+        if is_least_squares is True:
+            res = scipy.optimize.least_squares(f_with_count, x0, method=method)
+        else:
             if method == 'dogleg':
-                scipy.optimize.minimize(f, x0, method=method,
-                         jac=fun_der, hess=fun_hess, callback=callback)
+                res = scipy.optimize.minimize(f_with_count, x0, method=method,
+                         jac=fun_der, hess=fun_hess)
             else:
-                scipy.optimize.minimize(f, x0, method=method, options={'maxiter': max_iter}, callback=callback)
+                # bounds = [(-50, 50), (-50, 50)]
+                res = scipy.optimize.minimize(f_with_count, x0, method=method, options={'maxiter': max_iter})
 
-            return x_list
+        res_w = np.array(res.x, dtype=float)
 
-        points = get_scipy_history()
-        return points[-1], len(points)
+        return res_w, f_with_count.num_iterations
 
     return minimize_func
 
@@ -51,6 +58,8 @@ def get_func_method(argument):
         'scipy-bfgs': scipy_minimize('BFGS', True),
         'scipy-l-bfgs': scipy_minimize('L-BFGS-B', True),
         'scipy-dog-leg': scipy_minimize('dogleg', True),
+        'scipy-least_squares-dog-box': scipy_minimize('dogbox', True, True),
+        'scipy-least_squares-trf': scipy_minimize('trf', True, True),
     }
 
     result = switch_dict.get(argument)
