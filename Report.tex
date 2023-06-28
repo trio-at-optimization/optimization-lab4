@@ -1,42 +1,31 @@
 \documentclass[12pt, a4paper, oneside, final]{article}
 \usepackage[margin = 1in, bottom = 1in]{geometry}
 
+\pdfminorversion = 5 
+\pdfcompresslevel = 9
+\pdfobjcompresslevel = 2
+
 \usepackage[T2A]{fontenc}
 \usepackage[utf8]{inputenc}
 \usepackage[english, russian]{babel}
-\usepackage{xcolor, ulem, soulutf8, soul, fancyhdr, amsmath, amssymb, amsthm, svg, wrapfig, csvsimple, float, caption, subcaption}
+\usepackage{xcolor, ulem, soulutf8, soul, fancyhdr, amsmath, amssymb, amsthm, svg, wrapfig, csvsimple, float, caption, subcaption, titlesec, hyperref, multicol, listings, tocloft, longtable, skak, stmaryrd, color, minted}
 \usepackage[shortlabels]{enumitem}
-\usepackage{titlesec, hyperref, multicol, listings}
 \usepackage[most]{tcolorbox}
-\usepackage[makeroom]{cancel}
-\usepackage[most]{tcolorbox}
-\usepackage{tocloft, longtable, skak, stmaryrd, color}
 \usepackage[framemethod = tikz]{mdframed}
-\usepackage{minted}
 
-\definecolor{codegreen}{rgb}{0,0.6,0}
-\definecolor{codegray}{rgb}{0.5,0.5,0.5}
-\definecolor{codepurple}{rgb}{0.58,0,0.82}
-\definecolor{backcolour}{rgb}{0.95,0.95,0.92}
-\definecolor{blueish}{rgb}{0.96,0.96,1.0}
-\definecolor{grayblueish}{rgb}{0.97,0.97,0.98}
-\definecolor{transblue}{rgb}{0.9,0.9,0.97}
-\definecolor{transred}{rgb}{0.97,0.9,0.9}
-\definecolor{light-gray}{gray}{0.95}
+\definecolor{codegreen}{rgb}{0, 0.6, 0}
+\definecolor{codegray}{rgb}{0.5, 0.5, 0.5}
+\definecolor{codepurple}{rgb}{0.58, 0, 0.82}
+\definecolor{backcolour}{rgb}{0.95, 0.95, 0.92}
 
-\renewcommand{\figurename}{}
-\addto\captionsrussian{\renewcommand{\figurename}{}}
-\captionsetup[table]{labelformat = empty}
+\hypersetup{colorlinks, citecolor = pink, filecolor = pink, linkcolor = pink, urlcolor = pink}
 
-\hypersetup{
-	colorlinks,
-	citecolor = pink,
-	filecolor = pink,
-	linkcolor = pink,
-	urlcolor = pink
-}
+\everymath{\displaystyle}
+\binoppenalty = 10000
+\relpenalty = 10000
+\sloppy
 
-\newtcblisting{mylisting}{
+\newtcblisting{pseudocode}{
 	listing only,
 	breakable,
 	colback = backcolour,
@@ -66,36 +55,40 @@
 	}
 }
 
-\binoppenalty = 10000
-\relpenalty = 10000
-\sloppy
-
 \renewcommand*{\theenumi}{\thesection.\arabic{enumi}}
 \renewcommand*{\theenumii}{\alph{enumii}}
 \renewcommand*{\labelitemi}{\ensuremath{\triangleright}}
 
-\everymath{\displaystyle}
-
-\begin{document}
-	\thispagestyle{empty}
-	\vspace*{0.5em}
+\def\cover{
 	\begin{center}
 		{Национальный исследовательский университет ИТМО\\Факультет информационных технологий и программирования\\Прикладная математика и информатика}\\[5.0em]
 		{\Huge \bfseries Методы оптимизации}\\[0.5em]
 		{\large Отчет по лабораторной работе №4}\\[0.5em]
 		\textcolor{gray}{\textlangle Собрано \today\textrangle}
 	\end{center}
+}
+
+\def\officials{
+	\begin{tabular}{ll}
+		\textbf{Работу выполнили:} \\ Бактурин Савелий Филиппович M32331 \\ Вереня Андрей Тарасович M32331 \\ Сотников Максим Владимирович M32331 \vspace*{1em} \\
+		\textbf{Преподаватель:} \\ Казанков Владислав Константинович
+	\end{tabular}
+}
+
+\def\firstpage{
+	\thispagestyle{empty}
+	\vspace*{0.5em}
+	\cover
 	\begingroup
-	\def\hd{\begin{tabular}{ll}
-			\textbf{Работу выполнили:} \\ Бактурин Савелий Филиппович M32331 \\ Вереня Андрей Тарасович M32331 \\ Сотников Максим Владимирович M32331 \vspace*{1em} \\
-			\textbf{Преподаватель:} \\ Казанков Владислав Константинович
-		\end{tabular}
-	}
 	\vspace*{30em}
-	\newlength{\hdwidth}
-	\settowidth{\hdwidth}{\hd}
-	\hfill\begin{minipage}{\hdwidth}\hd\end{minipage}
+	\newlength{\officialswidth}
+	\settowidth{\officialswidth}{\officials}
+	\hfill\begin{minipage}{\officialswidth}\officials\end{minipage}
 	\endgroup
+}
+
+\begin{document}
+	\firstpage
 	\newpage
 	\section*{Стохастический градиентный спуск vs. \texttt{torch.optim}}
 	Настало время сравнить самописные реализации обычного и других модифицированных версий стохастического градиентного спуска с написанным серьезным дядьками из PyTorch.
@@ -142,11 +135,11 @@
 	\end{align*}
 	По сути, она выстраивает модель оптимизатора, определенный в библиотеке PyTorch, от $\mathtt{optimizer\_method}$, который подается как дождь - с небес, и далее по количестве, ограниченных по умолчанию в 10000 шагов, начинает обновлять параметры модели (от исходной точки) от композиции обнуления градиенты, вычисления функции потерь, проверки на сходимость и, соответственно, шага.
 	Наконец, определим еще одну, усредняющую функцию, для вывода результатов~-- \texttt{get\_average\_loss\_history}~-- она вычисляет среднее значение функции потерь \texttt{helper.mse\_loss}, определяемая как
-	\begin{mylisting}
+	\begin{pseudocode}
 function $mse\_loss(X_{\text{dataset}}, ~ Y_{\text{dataset}}, ~ w, ~ f)$:
 	$y' \gets \mathtt{f}(X_{\text{dataset}}, ~ w)$;
 	return $\text{torch}.\mathtt{mean}((Y_{\text{dataset}} - y')^2)$;
-	\end{mylisting}
+	\end{pseudocode}
 	То есть, такая функция, которая вычисляет среднеквадратичную ошибку между предсказанными и реальными значениями на основе модели.
 	\subsection*{SGD vs. \mintinline{python}|torch.optim.SGD|}
 	Перейдем к исследованиям.
@@ -604,7 +597,7 @@ function $mse\_loss(X_{\text{dataset}}, ~ Y_{\text{dataset}}, ~ w, ~ f)$:
 	\subsection*{Эксперименты с SciPy}
 	Впервые мы будем работать только с библиотекой SciPy и будем проводить на ней некоторые опыты, а именно мы хотим понять, а как ограничение, которое уже было использовано в пункте (a) этого задания, влияет на работу самих методов.
 	В тот раз мы смотрели на ограничение определения функции в заданном диапазоне, здесь же мы будем крутить параметр Bounds и смотреть, что да как.
-	Для рассмотрения мы возьмем одного представителя из \mintinline{python}|scipy.optimize.minimize| и двух~-- \mintinline{python}|scipy.optimize.least\_squares|: L-BFGS, Dog-Box (из Least Squares) и TRF (также оттуда).
+	Для рассмотрения мы возьмем одного представителя из \mintinline{python}|scipy.optimize.minimize| и двух~-- \mintinline{python}|scipy.optimize.least_squares|: L-BFGS, Dog-Box (из Least Squares) и TRF (также оттуда).
 	В качестве исследуемой функции и генерируемого набора данных, относительно чего, мы возьмем те же параметры, что и в пункте (a), то есть, в качестве функции:
 	\begin{align*}
 		f(x, w) &= 1 + w_0 \cdot \cos{(2 \cdot \pi \cdot x)} + w_1 \cdot \sin{(2 \cdot \pi \cdot x)} \\
@@ -781,29 +774,4 @@ function $mse\_loss(X_{\text{dataset}}, ~ Y_{\text{dataset}}, ~ w, ~ f)$:
 			With linear constraint & $18$ & $\langle -2.903534,  -2.899816 \rangle$ & $-156.664185$
 		\end{tabular}
 	\end{table}
-%	Зададим начальную точку как $\langle x_0, y_0 \rangle = \langle -3.0, 0.0 \rangle$, а также линейное ограничение со следующими параметрами:
-%	\[
-%		A =
-%		\begin{pmatrix}
-%			1 & 0
-%		\end{pmatrix}, \quad \mathtt{lb} = -4.5,
-%	\] где $\mathtt{lb}$~-- это нижняя граница ограничительного луча $[\mathtt{lb}, +\infty)$.
-%	Итак, посмотрим же на график без ограничений и с ними:
-%	\begin{figure}[H]
-%		\centering
-%		\includegraphics[scale = 0.465]{Image/AT_TANGA_NO_CONSTRAINT.png}
-%		\includegraphics[scale = 0.465]{Image/AT_TANGA_LINEAR_CONSTRAINT.png}
-%		\caption*{Tanga with no constraint and with linear}
-%	\end{figure}
-%	Итак, здесь мы видим, что изначально метод \mintinline{python}|trust-constr|, сделав первые $10$ шагов, остановился и остался стоят на одном месте, то есть, не сошелся.
-%	Однако, здесь мы впервые видим, как аналитическое решение приводит к правильному направлению к минимуму: метод хоть и не сошелся хорошо, но на минимуме начал замедляться, как бы пытаясь найти самый-самый, не пропуская ни один из виду.
-%	Полученные табличные результаты:
-%	\begin{table}[H]
-%		\centering
-%		\begin{tabular}{l|l|l|l}
-%			Испытуемый & Число шагов & $\langle x, y \rangle$ & $z$ \\ \hline
-%			No any constraints & $10 + \infty$ & $\langle -0.999878, -0.999878 \rangle$ & $-39.991961$ \\
-%			With linear constraint & $419$ & $\langle -2.750000, -1.000000 \rangle$ & $-97.558594$
-%		\end{tabular}
-%	\end{table}
 \end{document}
