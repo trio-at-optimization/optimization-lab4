@@ -32,15 +32,19 @@ def scipy_minimize(method, manual_save_history=False, is_least_squares=False):
 
         f_with_count.num_iterations = 0
 
+        bounds_max = max(50, x0[0])
+        bounds_min = min(-50, x0[0])
+
         if is_least_squares is True:
-            res = scipy.optimize.least_squares(f_with_count, x0, method=method)
+            bounds = [(bounds_min, bounds_min), (bounds_max, bounds_max)]
+            res = scipy.optimize.least_squares(f_with_count, x0, bounds=bounds, method=method)
         else:
             if method == 'dogleg':
                 res = scipy.optimize.minimize(f_with_count, x0, method=method,
                          jac=fun_der, hess=fun_hess)
             else:
-                # bounds = [(-50, 50), (-50, 50)]
-                res = scipy.optimize.minimize(f_with_count, x0, method=method, options={'maxiter': max_iter})
+                bounds = [(bounds_min, bounds_max), (bounds_min, bounds_max)]
+                res = scipy.optimize.minimize(f_with_count, x0, method=method, bounds=bounds, options={'maxiter': max_iter})
 
         res_w = np.array(res.x, dtype=float)
 

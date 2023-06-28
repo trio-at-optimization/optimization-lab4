@@ -28,7 +28,7 @@ def research_thread(num_thread, script_path, dataset_name, method, result_filena
 
 
 def main():
-    result_name = 'X_10_SCIPY-LEAST_SQUARES-TRF'
+    result_name = 'X_10_SCIPY-LEAST_SQUARES-TRF_BOUNDS_FULL'
     params = {
         'dataset_name': '1',
         'method': 'scipy-least_squares-trf',
@@ -41,6 +41,7 @@ def main():
         "init_density_y": 1
     }
     count_threads = max(cpu_count(), 1)
+    count_threads = 4
     script_path = 'one_thread_research.py'
     dataset_params = helper.get_params_dataset(params['dataset_name'])
 
