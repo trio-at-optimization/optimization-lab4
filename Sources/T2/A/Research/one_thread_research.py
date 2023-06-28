@@ -56,8 +56,6 @@ if __name__ == '__main__':
              )
 
         print("End", args[0])
-        for i in tqdm(range(100), desc="Lol"):
-            time.sleep(1)
     except Exception as e:
         print("Exception caught!")
         print("Type of exception:", type(e).__name__)

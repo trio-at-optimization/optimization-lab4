@@ -9,6 +9,12 @@ def mse_loss(f, w, x_train, y_train):
     return mse
 
 
+def mse_loss_norm(x_train, y_train, w, f):
+    y_pred = f(x_train, w)
+    mse = np.mean((y_train - y_pred) ** 2)
+    return mse
+
+
 def mse_loss_torch(dataset_X, dataset_Y, w, f):
     y_pred = f(dataset_X, w)
     mse = torch.mean((dataset_Y - y_pred) ** 2)

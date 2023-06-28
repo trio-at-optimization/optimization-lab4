@@ -28,17 +28,18 @@ def research_thread(num_thread, script_path, dataset_name, method, result_filena
 
 
 def main():
-    result_name = 'X_10_GN'
+    result_name = 'X_10_SCIPY-DOG-LEG'
     params = {
         'dataset_name': '1',
-        'method': 'gauss-newton',   # gauss-newton / dog-leg / adam / l-bfgs
+        'method': 'scipy-dog-leg',
+        # gauss-newton / dog-leg / adam / l-bfgs
+        # scipy-bfgs / scipy-l-bfgs / scipy-dog-leg
         "init_dist_x": 10,
         "init_dist_y": 0,
         "init_density_x": 101,
         "init_density_y": 1
     }
     count_threads = max(cpu_count(), 1)
-    count_threads = 8
     script_path = 'one_thread_research.py'
     dataset_params = helper.get_params_dataset(params['dataset_name'])
 

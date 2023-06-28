@@ -34,7 +34,7 @@ def get_and_parse_result(name):
         one_point_array.append(one_point["init_weights"][1])
 
         for i in range(params_dataset['test_count']):
-            one_point_mse.append(mse_loss(dataset_X[i], dataset_Y[i], np.array(
+            one_point_mse.append(mse_loss_norm(dataset_X[i], dataset_Y[i], np.array(
                 (one_point["results"][i][0][1], one_point["results"][i][0][1]), dtype=float), f))
             one_point_steps.append(one_point["results"][i][1])
 
