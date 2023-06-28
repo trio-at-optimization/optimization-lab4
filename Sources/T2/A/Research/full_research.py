@@ -28,10 +28,10 @@ def research_thread(num_thread, script_path, dataset_name, method, result_filena
 
 
 def main():
-    result_name = 'X_10_SCIPY-SCIPY-L'
+    result_name = 'X_10_SCIPY-LEAST_SQUARES-TRF'
     params = {
         'dataset_name': '1',
-        'method': 'scipy-l-bfgs',
+        'method': 'scipy-least_squares-trf',
         # gauss-newton / dog-leg / adam / l-bfgs
         # scipy-bfgs / scipy-l-bfgs / scipy-dog-leg
         # scipy-least_squares-dog-box / scipy-least_squares-trf

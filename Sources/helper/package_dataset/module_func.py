@@ -49,12 +49,39 @@ def scipy_minimize(method, manual_save_history=False, is_least_squares=False):
     return minimize_func
 
 
+def our_minimize(method):
+    def minimize_func(f_real, X, Y, x0, epsilon, max_iter):
+        def f_real_with_count(x, w):
+            f_real_with_count.num_iterations += 1
+            return f_real(x, w)
+
+        f_real_with_count.num_iterations = 0
+
+        switch_dict = {
+            'gauss-newton': gauss_newton_fast,
+            'dog-leg': dog_leg,
+            'adam': adam,
+            'l-bfgs': lbfgs,
+        }
+
+        result_func = switch_dict.get(method)
+
+        end_point, _ = result_func(f_real_with_count, X, Y, x0, epsilon=epsilon, max_iter=max_iter)
+
+        if method == 'gauss-newton' or method == 'dog-leg':
+            f_real_with_count.num_iterations /= len(Y)
+
+        return end_point, f_real_with_count.num_iterations
+
+    return minimize_func
+
+
 def get_func_method(argument):
     switch_dict = {
-        'gauss-newton': gauss_newton_fast,
-        'dog-leg': dog_leg,
-        'adam': adam,
-        'l-bfgs': lbfgs,
+        'gauss-newton': our_minimize('gauss-newton'),
+        'dog-leg': our_minimize('dog-leg'),
+        'adam': our_minimize('adam'),
+        'l-bfgs': our_minimize('l-bfgs'),
         'scipy-bfgs': scipy_minimize('BFGS', True),
         'scipy-l-bfgs': scipy_minimize('L-BFGS-B', True),
         'scipy-dog-leg': scipy_minimize('dogleg', True),
