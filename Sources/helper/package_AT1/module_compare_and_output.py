@@ -13,7 +13,7 @@ class file_info_3d:
 
 
 def print_lines_grad(file_info_3d, result, label, nth=1, title='Спуск на графике функции', filename='',
-                     filename_extension='.png', dpi=512):
+                     filename_extension='.png', dpi=512, min_coord=(0, 0)):
     plt.style.use('default')
     fig, ax = plt.subplots(figsize=(8, 8))
 
@@ -30,6 +30,8 @@ def print_lines_grad(file_info_3d, result, label, nth=1, title='Спуск на 
     x = list_result_nth[:, 0]
     y = list_result_nth[:, 1]
     ax.plot(x, y, marker='.', markersize=10, markerfacecolor='black', color='coral', label=label, linewidth=1.8)
+    ax.plot(result[0][0], result[0][1], marker='.', markersize=13, color='r', label='start point')
+    ax.plot(min_coord[0], min_coord[1], marker='.', markersize=13, color='greenyellow', label='minimum')
     print(
         f'{label:15} ==> '
         f'{file_info_3d.f(result[-1]):10f} in [{result[-1][0]:10f}, {result[-1][1]:10f}] in {len(result) - 1} steps.')
@@ -61,13 +63,14 @@ def minimize_and_output(
         , options=None
         , manual_history=False
         , nth=1
+        , min_coord=(0, 0)
     ):
     def get_points_hostory():
         if not manual_history:
             return minimize(func, initial_x, method=method_label, options=options)['allvecs']
 
         points = []
-        
+
         def callback(x, _=None):
             points.append(x)
 
@@ -81,4 +84,6 @@ def minimize_and_output(
     f_info = file_info_3d(X, Y, func, initial_x)
 
     print(message)
-    print_lines_grad(f_info, np.array(points), output_label, nth=nth)
+
+    print_lines_grad(f_info, np.array(points), output_label, nth=nth, min_coord=min_coord)
+        
