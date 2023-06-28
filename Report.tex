@@ -491,7 +491,7 @@ function $mse\_loss(X_{\text{dataset}}, ~ Y_{\text{dataset}}, ~ w, ~ f)$:
 		\mathtt{test\_count} &= 15~\text{(количество исследований на усреднение, умоляя случайность)}
 	\end{align*}
 	Итак, запустим наших зверей на бедную функцию, пусть они её растерзают, а мы лишь поглядим на результаты$\ldots$
-	\paragraph{Все и сразу}
+
 	Посмотрим на вывод всех и сразу функций, а именно: \texttt{dog-leg}, \texttt{gauss-newton}, \texttt{l-bfgs}, \texttt{scipy-bfgs}, \texttt{scipy-lbfgs} (+ еще две разные версии ограничения), \texttt{scipy-dog-leg}, \texttt{scipy-least-squares-dog-box} (+ еще также две разные версии ограничения) и, наконец, \texttt{scipy-least-squares-trf} (+ все также с двумя различными версиями ограничений).
 	Сами ограничения мы рассмотрим чуть ниже, а пока посмотрим на вывод графика MSE.
 	\begin{figure}[H]
@@ -693,15 +693,15 @@ function $mse\_loss(X_{\text{dataset}}, ~ Y_{\text{dataset}}, ~ w, ~ f)$:
 		\includegraphics[scale = 0.475]{Image/AT_ROSEN_NONLINEAR_CONSTRAINT.png}
 		\caption*{Rosen with no constraint and with non-linear}
 	\end{figure}
-	Уже без каких-либо таблиц с результатами схождения мы можем увидеть, что расстояние и, соответственно, количество шагов сильно уменьшилось при добавленном эллипсе.
+	Уже без каких-либо таблиц с результатами схождения мы можем увидеть, что расстояние и, соответственно, количество шагов сильно увеличилось при добавленном эллипсе, так как алгоритм пошел по границе эллипса.
 	Мы можем заметить небольшую <<горку>> в шагах алгоритма, которые и приводят к месту, где обитает минимум.
 	Полученные табличные результаты:
 	\begin{table}[H]
 		\centering
 		\begin{tabular}{l|l|l|l}
 			Испытуемый & Число шагов & $\langle x, y \rangle$ & $z$ \\ \hline
-			No any constraints & $58$ & $\langle 0.998788, 0.997573 \rangle$ & $0.000001$ \\
-			With non-linear constraint & $44$ & $\langle 0.998787, 0.997571 \rangle$ & $0.000001$
+			No any constraints & $49$ & $\langle 0.999995,   0.999991 \rangle$ & $0.000000$ \\
+			With non-linear constraint & $79$ & $\langle 1.000018,   1.000036 \rangle$ & $0.000000$
 		\end{tabular}
 	\end{table}
 	Теперь сделаем тоже самое, но уже только с линейным ограничением.
@@ -716,50 +716,94 @@ function $mse\_loss(X_{\text{dataset}}, ~ Y_{\text{dataset}}, ~ w, ~ f)$:
 	Итак, посмотрим же на график без ограничений и с ними:
 	\begin{figure}[H]
 		\centering
-		\includegraphics[scale = 0.475]{Image/AT_ROSEN2_NO_CONSTRAINT.png}
-		\includegraphics[scale = 0.475]{Image/AT_ROSEN2_LINEAR_CONSTRAINT.png}
+		\includegraphics[scale = 0.475]{Image/AT_ROSEN_NO_CONSTRAINT.png}
+		\includegraphics[scale = 0.475]{Image/AT_ROSEN_LINEAR_CONSTRAINT.png}
 		\caption*{Rosen with no constraint and with linear}
 	\end{figure}
-	Опять же, мы видим, что довольно-таки сильный срез в пути, а именно, в правильном направлении, по которому следует идти, позволил ограничить число шагов до сходимости в разы.
+	Опять же, мы видим, что довольно-таки сильный срез в пути, а именно, в правильном направлении, по которому следует идти, вновь увеличил число шагов до сходимости в разы.
 	Полученные табличные результаты:
 	\begin{table}[H]
 		\centering
 		\begin{tabular}{l|l|l|l}
 			Испытуемый & Число шагов & $\langle x, y \rangle$ & $z$ \\ \hline
-			No any constraints & $58$ & $\langle 0.998788, 0.997573 \rangle$ & $0.000001$ \\
-			With linear constraint & $35$ & $\langle 0.997298, 0.994596 \rangle$ & $0.000007$
+			No any constraints & $49$ & $\langle 0.999995,   0.999991 \rangle$ & $0.000000$ \\
+			With linear constraint & $122$ & $\langle 1.000000,   0.999999 \rangle$ & $0.000000$
 		\end{tabular}
 	\end{table}
-	Только вот на сей раз вышло немного забавно: мы хоть и дошли до минимума быстрее, но ошиблись на смешной $\varepsilon$.
 
 	А теперь возьмем функцию посильнее и менее тривиальную в дальнейшей минимизации, а именно~-- Стыбинского-Танга, где также, как и во многих других пренеприятных функциях, имеется еще как минимум несколько похожих минимумов, среди которых лишь один является настоящим.
 	Сама функция определяется следующей формулой, здесь $\vec{x}$~-- вектор, так как функция рассчитана на многомерные и многопеременные случаи:
 	\[
 		f(\vec{x}) = \dfrac{\sum\limits_{i = 1}^{n}{x_{i}^{4} - 16x_{i}^{2} + 5x_{i}}}{2}
 	\]
-	Зададим начальную точку как $\langle x_0, y_0 \rangle = \langle -3.0, 0.0 \rangle$, а также линейное ограничение со следующими параметрами:
+	Здесь мы рассматриваем два дополнительных случая, когда мы стоим на области минимума и при этом поставили ограничение.
+	Пусть начальная точка задана как $\langle x_0, y_0 \rangle = \langle -4.0, -4.0 \rangle$ и положим следующие параметры для нелинейного ограничения:
 	\[
-		A =
-		\begin{pmatrix}
-			1 & 0
-		\end{pmatrix}, \quad \mathtt{lb} = -4.5,
-	\] где $\mathtt{lb}$~-- это нижняя граница ограничительного луча $[\mathtt{lb}, +\infty)$.
-	Итак, посмотрим же на график без ограничений и с ними:
+		f(x, y) = (x + 3)^2 + (y + 3)^2,
+	\] то это вновь эллипс, который стоит прямо на минимуме (центр там расположен); ограничительный луч будет следующим $[0.25, +\infty)$.
+	Запустим и посмотрим на алгоритмы:
 	\begin{figure}[H]
 		\centering
-		\includegraphics[scale = 0.465]{Image/AT_TANGA_NO_CONSTRAINT.png}
-		\includegraphics[scale = 0.465]{Image/AT_TANGA_LINEAR_CONSTRAINT.png}
-		\caption*{Tanga with no constraint and with linear}
+		\includegraphics[scale = 0.47]{Image/AT_TANGA_MINIMUM_NO_CONSTRAINT.png}
+		\includegraphics[scale = 0.47]{Image/AT_TANGA_MINIMUM_NONLINEAR_CONSTRAINT.png}
+		\caption*{Tanga with no constraint and with non-linear}
 	\end{figure}
-	Итак, здесь мы видим, что изначально метод \mintinline{python}|trust-constr|, сделав первые $10$ шагов, остановился и остался стоят на одном месте, то есть, не сошелся.
-	Однако, здесь мы впервые видим, как аналитическое решение приводит к правильному направлению к минимуму: метод хоть и не сошелся хорошо, но на минимуме начал замедляться, как бы пытаясь найти самый-самый, не пропуская ни один из виду.
-	Полученные табличные результаты:
+	Из-за того, чтобы на данной функции существует еще некоторое число минимумов, метод поиска не растерялся и пошел другой минимум, так как мы ограничили какую-либо возможность добраться до минимума.
+	Соответствующие графики, полученные после:
 	\begin{table}[H]
 		\centering
 		\begin{tabular}{l|l|l|l}
 			Испытуемый & Число шагов & $\langle x, y \rangle$ & $z$ \\ \hline
-			No any constraints & $10 + \infty$ & $\langle -0.999878, -0.999878 \rangle$ & $-39.991961$ \\
-			With linear constraint & $419$ & $\langle -2.750000, -1.000000 \rangle$ & $-97.558594$
+			No any constraints & $15$ & $\langle -2.903534,  -2.903534 \rangle$ & $-156.664663$ \\
+			With non-linear constraint & $89$ & $\langle -2.903534,   2.746803 \rangle$ & $-128.391225$
 		\end{tabular}
 	\end{table}
+	А теперь сделаем тоже самое, но для линейного ограничения, то есть мы намеренно поставим точку в центр мира $\langle x_0, y_0 \rangle = \langle 0, 0 \rangle$ и проведем ограничительный отрезок с заданным параметрами:
+	\[
+		A =
+		\begin{pmatrix}
+			0 & 1
+		\end{pmatrix}, \quad \mathtt{lb} = -2.9, \quad \mathtt{up} = +\infty,
+	\] где последние два параметра~-- это границы ограничительного луча.
+	Получаем пути алгоритмов:
+	\begin{figure}[H]
+		\centering
+		\includegraphics[scale = 0.47]{Image/AT_TANGA_MINIMUM2_NO_CONSTRAINT.png}
+		\includegraphics[scale = 0.47]{Image/AT_TANGA_MINIMUM2_LINEAR_CONSTRAINT.png}
+		\caption*{Tanga with no constraint and with linear}
+	\end{figure}
+	Получаем небольшую <<лапку>>: метод поиска на первой картинке уже видит минимум и бодрыми шагами шагает прямо в бездну, с ограничением он понимает, что что-то не так и сначала прыгает в область, где хоть и поменьше, но не совсем минимум, а дальше  уже прыжок вновь в бездну.
+	\begin{table}[H]
+		\centering
+		\begin{tabular}{l|l|l|l}
+			Испытуемый & Число шагов & $\langle x, y \rangle$ & $z$ \\ \hline
+			No any constraints & $16$ & $\langle-2.903534,  -2.903534 \rangle$ & $-156.664663$ \\
+			With linear constraint & $18$ & $\langle -2.903534,  -2.899816 \rangle$ & $-156.664185$
+		\end{tabular}
+	\end{table}
+%	Зададим начальную точку как $\langle x_0, y_0 \rangle = \langle -3.0, 0.0 \rangle$, а также линейное ограничение со следующими параметрами:
+%	\[
+%		A =
+%		\begin{pmatrix}
+%			1 & 0
+%		\end{pmatrix}, \quad \mathtt{lb} = -4.5,
+%	\] где $\mathtt{lb}$~-- это нижняя граница ограничительного луча $[\mathtt{lb}, +\infty)$.
+%	Итак, посмотрим же на график без ограничений и с ними:
+%	\begin{figure}[H]
+%		\centering
+%		\includegraphics[scale = 0.465]{Image/AT_TANGA_NO_CONSTRAINT.png}
+%		\includegraphics[scale = 0.465]{Image/AT_TANGA_LINEAR_CONSTRAINT.png}
+%		\caption*{Tanga with no constraint and with linear}
+%	\end{figure}
+%	Итак, здесь мы видим, что изначально метод \mintinline{python}|trust-constr|, сделав первые $10$ шагов, остановился и остался стоят на одном месте, то есть, не сошелся.
+%	Однако, здесь мы впервые видим, как аналитическое решение приводит к правильному направлению к минимуму: метод хоть и не сошелся хорошо, но на минимуме начал замедляться, как бы пытаясь найти самый-самый, не пропуская ни один из виду.
+%	Полученные табличные результаты:
+%	\begin{table}[H]
+%		\centering
+%		\begin{tabular}{l|l|l|l}
+%			Испытуемый & Число шагов & $\langle x, y \rangle$ & $z$ \\ \hline
+%			No any constraints & $10 + \infty$ & $\langle -0.999878, -0.999878 \rangle$ & $-39.991961$ \\
+%			With linear constraint & $419$ & $\langle -2.750000, -1.000000 \rangle$ & $-97.558594$
+%		\end{tabular}
+%	\end{table}
 \end{document}
